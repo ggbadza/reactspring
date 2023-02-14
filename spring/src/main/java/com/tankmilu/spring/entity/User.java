@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.tankmilu.spring.enums.UserRole;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,11 +43,12 @@ public class User {
     @Column(nullable = true, length = 11)
     private int phone;
 
-    // @Column(nullable = false)
-    // @Enumerated(value = EnumType.STRING)
-    // private String role;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
 
     @CreatedDate
     private Timestamp registerDate;
 
 }
+

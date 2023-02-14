@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.tankmilu.spring.dto.UserRegisterDto;
 import com.tankmilu.spring.entity.User;
+import com.tankmilu.spring.enums.UserRole;
 import com.tankmilu.spring.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ public class UserService {
         user.setId(userRegisterDto.getId());
         user.setPassword(bcryptPasswordEncoder.encode(userRegisterDto.getPasswd()));
         user.setUsername(userRegisterDto.getName());
-        // user.setRole("user");
+        user.setRole(UserRole.USER);
+        user.setUid(0);
         return userRepository.save(user);
     }
     
