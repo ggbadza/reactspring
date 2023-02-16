@@ -21,11 +21,10 @@ public class UserService {
 
     public User register(UserRegisterDto userRegisterDto){
         User user = new User();
-        user.setId(userRegisterDto.getId());
+        user.setEmail(userRegisterDto.getEmail());
         user.setPassword(bcryptPasswordEncoder.encode(userRegisterDto.getPasswd()));
-        user.setUsername(userRegisterDto.getName());
+        user.setNickname(userRegisterDto.getName());
         user.setRole(UserRole.USER);
-        user.setUid(0);
         return userRepository.save(user);
     }
     

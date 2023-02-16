@@ -1,15 +1,17 @@
 package com.tankmilu.spring.entity;
 
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.tankmilu.spring.enums.UserRole;
 
@@ -22,33 +24,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
+@Entity(name="Users")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int uid;
 
-    @Column(nullable = false, length = 20)
-    private String id;
-
-    @Column(nullable = false, length = 20)
-    private String username;  
-
-    @Column(nullable = false, length = 32)    
-    private String password;
-
-    @Column(nullable = true, length = 30)
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = true, length = 20)
+    private String nickname;  
+
+    @Column(nullable = false, length = 64)    
+    private String password;
 
     @Column(nullable = true, length = 11)
     private int phone;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
     @CreatedDate
-    private Timestamp registerDate;
+    private LocalDateTime registerDate;
 
 }
 
