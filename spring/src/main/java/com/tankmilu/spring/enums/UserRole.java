@@ -19,5 +19,4 @@ public enum UserRole {
         static String USER = "ROLE_USER";
         static String SELLER = "ROLE_SELLER";
     }
-
 }

@@ -22,11 +22,6 @@ public class UserController {
     
     private final UserService userService;
 
-    @GetMapping("/hi")
-    public String hi(){
-        return "<html><body><h1>Hello, ResponseBody!</h1></body></html>";
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<?> Signup(@RequestBody UserRegisterDto userRequest) {
         var data = userService.register(userRequest);

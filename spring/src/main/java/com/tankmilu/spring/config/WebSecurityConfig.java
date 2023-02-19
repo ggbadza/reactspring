@@ -17,7 +17,7 @@ public class WebSecurityConfig {
         http.csrf().disable();// Rest api 서버 CSRF 비활성화
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
-        .antMatchers("/user/**").permitAll()
+        .antMatchers("/**").permitAll()
         .anyRequest().authenticated(); // 인증 된 유저만 접근
          //SessionCreationPolicy.STATELESS
         return http.build();
