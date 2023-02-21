@@ -41,6 +41,13 @@ public class UserService {
         );
     }
 
+    public User findUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> {
+                return new IllegalArgumentException("유저 Email을 찾을 수 없습니다.");
+            }
+        );
+    }
+
     @Transactional
     public User modifyUser(UserModifyDto userModifyDto) {
         User user = userRepository.findById(userModifyDto.getUid()).orElseThrow(() -> new IllegalArgumentException("유저 ID를 찾을 수 없습니다."));
