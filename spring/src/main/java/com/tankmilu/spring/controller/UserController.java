@@ -1,6 +1,11 @@
 package com.tankmilu.spring.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tankmilu.spring.dto.UserLoginDto;
 import com.tankmilu.spring.dto.UserModifyDto;
 import com.tankmilu.spring.dto.UserRegisterDto;
+import com.tankmilu.spring.security.CustomUserDetails;
 import com.tankmilu.spring.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +52,19 @@ public class UserController {
         var data = userService.modifyUser(userRequest);
         return ResponseEntity.ok().body(data);
     }
+
+    @PostMapping("/login")
+    public String login(@AuthenticationPrincipal UserLoginDto userLoginDto, HttpServletResponse response) {
+        userService.login(userLoginDto, response);
+        return "success!";
+    
+    }
+
+
+    // public ResponseEntity<?> Login(@RequestBody UserLoginDto userRequest) {
+    //     var data = userService.register(userRequest);
+    //     return ResponseEntity.ok().body(data);
+    // }
 
     
 

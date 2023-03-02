@@ -7,19 +7,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.tankmilu.spring.security.JwtAuthFilter;
+import com.tankmilu.spring.security.JwtUtil;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    private final JwtUtil jwtUtil;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();// Rest api 서버 CSRF 비활성화
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // SessionCreationPolicy.STATELESS
         http.authorizeHttpRequests()
-        .antMatchers("/**").permitAll()
-        .anyRequest().authenticated(); // 인증 된 유저만 접근
-         //SessionCreationPolicy.STATELESS
+        .antMatchers("/user").permitAll() // 임시
+        .anyRequest().authenticated() // 인증 된 유저만 접근
+        .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class); // JWT 적용
         return http.build();
     }
 

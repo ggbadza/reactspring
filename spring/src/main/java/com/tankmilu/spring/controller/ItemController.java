@@ -1,6 +1,7 @@
 package com.tankmilu.spring.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,5 +31,11 @@ public class ItemController {
     public ResponseEntity<?> RegisterItem(@RequestBody ItemDto itemRequest) {
         var data = itemService.register(itemRequest);
         return ResponseEntity.ok().body(data);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/admintest")
+    public String adnintest() {
+        return "Success!!";
     }
 }
