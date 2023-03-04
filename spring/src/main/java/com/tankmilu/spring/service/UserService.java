@@ -29,7 +29,7 @@ public class UserService {
     public User register(UserRegisterDto userRegisterDto){
         User user = new User();
         user.setEmail(userRegisterDto.getEmail());
-        user.setPassword(bcryptPasswordEncoder.encode(userRegisterDto.getPasswd()));
+        user.setPassword(bcryptPasswordEncoder.encode(userRegisterDto.getPassword()));
         user.setNickname(userRegisterDto.getName());
         user.setRole(UserRole.USER);
         return userRepository.save(user);
@@ -67,11 +67,11 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public void login(UserLoginDto loginRequestDto, HttpServletResponse response) {
-        String username = loginRequestDto.getEmail();
+        String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
         // 사용자 확인
-        User user = userRepository.findByEmail(username).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 
