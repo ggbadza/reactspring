@@ -1,5 +1,7 @@
 package com.tankmilu.spring.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +23,15 @@ public class ItemController {
 
     private final ItemService itemService;
     
-    @GetMapping("/getitem")
+    @GetMapping("/itemdetail")
     public ResponseEntity<?> GetItem(@RequestParam(value="id") int itemId) {
         var data = itemService.findItem(itemId);
         return ResponseEntity.ok().body(data);
+    }
+
+    @GetMapping("/itemlist")
+    public ResponseEntity<?> getItemList( @RequestParam("page") int page, @RequestParam("size") int size, HttpServletRequest request) {
+        return ItemService.getItemList(request, page-1, size);
     }
 
     @PostMapping("/register")
@@ -33,9 +40,4 @@ public class ItemController {
         return ResponseEntity.ok().body(data);
     }
 
-    @Secured("ROLE_ADMIN")
-    @GetMapping("/admintest")
-    public String adnintest() {
-        return "Success!!";
-    }
 }

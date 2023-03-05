@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class UserModifyDto {
     private int uid;
     private String email;
-    private String passwd;
+    private String password;
     private String name;
     private UserRole role;
-    private Integer phone;
+    private String phone;
 }

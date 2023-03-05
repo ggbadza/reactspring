@@ -3,6 +3,7 @@ package com.tankmilu.spring.controller;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,26 +29,39 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> Signup(@RequestBody UserRegisterDto userRequest) {
+    public ResponseEntity<?> signup(@RequestBody UserRegisterDto userRequest) {
         var data = userService.register(userRequest);
         return ResponseEntity.ok().body(data);
     }
 
+    // 유저 리스트 Get
+    @Secured("ROLE_ADMIN") 
     @GetMapping("/userlist")
-    public ResponseEntity<?> UserList() {
+    public ResponseEntity<?> userList() {
         var data = userService.findAll();
         return ResponseEntity.ok().body(data);
     }
 
+    // 유저 정보 Get
+    @Secured("ROLE_ADMIN") 
     @GetMapping("/getuser")
-    public ResponseEntity<?> GetUser(@RequestParam(value="uid") int uid) {
+    public ResponseEntity<?> getUser(@RequestParam(value="uid") int uid) {
         var data = userService.findUser(uid);
         return ResponseEntity.ok().body(data);
     }
 
+    // 본인 설정만 수정
     @PutMapping("/modify")
-    public ResponseEntity<?> Modify(@RequestBody UserModifyDto userRequest) {
-        var data = userService.modifyUser(userRequest);
+    public ResponseEntity<?> modify(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestBody UserModifyDto userRequest) {
+        var data = userService.modifyUser(userRequest,userDetails.getUid());
+        return ResponseEntity.ok().body(data);
+    }
+
+    // 모든 유저 설정 수정 by 어드민
+    @Secured("ROLE_ADMIN") 
+    @PutMapping("/modifybyadmin")
+    public ResponseEntity<?> modifyByAdmin(@RequestBody UserModifyDto userRequest) {
+        var data = userService.modifyUserByAdmin(userRequest);
         return ResponseEntity.ok().body(data);
     }
 
@@ -59,8 +73,9 @@ public class UserController {
     }
 
     @GetMapping("/info") // 인증된 사용자인지 확인
-    public String getUserName(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return userDetails.getUsername();
+    public ResponseEntity<?> getUserName(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        var data = userService.findUser(userDetails.getEmail());
+        return ResponseEntity.ok().body(data);
     }
 
 

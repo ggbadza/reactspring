@@ -54,16 +54,29 @@ public class UserService {
     }
 
     @Transactional
-    public User modifyUser(UserModifyDto userModifyDto) {
-        User user = userRepository.findById(userModifyDto.getUid()).orElseThrow(() -> new IllegalArgumentException("유저 ID를 찾을 수 없습니다."));
+    public User modifyUser(UserModifyDto userModifyDto,int uid) {
+        User user = userRepository.findById(uid).orElseThrow(() -> new IllegalArgumentException("유저 ID를 찾을 수 없습니다.")); // 로그인 한 계정 uid
+        
+        // if(userModifyDto.getEmail()!=null){user.setEmail(userModifyDto.getEmail());} // 계정명 변경 제외
+        if(userModifyDto.getPassword()!=null){user.setPassword(bcryptPasswordEncoder.encode(userModifyDto.getPassword()));}
+        if(userModifyDto.getName()!=null){user.setNickname(userModifyDto.getName());}
+        // if(userModifyDto.getRole()!=null){user.setRole(userModifyDto.getRole());} // 역할 변경 제외
+        if(userModifyDto.getPhone()!=null){user.setPhone(userModifyDto.getPhone());}
+        return user;
+    }
+
+    @Transactional
+    public User modifyUserByAdmin(UserModifyDto userModifyDto) {
+        User user = userRepository.findById(userModifyDto.getUid()).orElseThrow(() -> new IllegalArgumentException("유저 ID를 찾을 수 없습니다.")); // uid 따로 요청
         
         if(userModifyDto.getEmail()!=null){user.setEmail(userModifyDto.getEmail());}
-        if(userModifyDto.getPasswd()!=null){user.setPassword(bcryptPasswordEncoder.encode(userModifyDto.getPasswd()));}
+        if(userModifyDto.getPassword()!=null){user.setPassword(bcryptPasswordEncoder.encode(userModifyDto.getPassword()));}
         if(userModifyDto.getName()!=null){user.setNickname(userModifyDto.getName());}
         if(userModifyDto.getRole()!=null){user.setRole(userModifyDto.getRole());}
         if(userModifyDto.getPhone()!=null){user.setPhone(userModifyDto.getPhone());}
         return user;
     }
+
 
     @Transactional(readOnly = true)
     public void login(UserLoginDto loginRequestDto, HttpServletResponse response) {

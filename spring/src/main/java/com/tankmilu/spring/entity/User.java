@@ -41,7 +41,7 @@ public class User {
     private String password;
 
     @Column(nullable = true, length = 11)
-    private Integer phone;
+    private String phone;
 
     @Column(nullable = true)
     @Enumerated(value = EnumType.STRING)
