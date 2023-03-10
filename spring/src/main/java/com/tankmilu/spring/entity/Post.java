@@ -5,17 +5,14 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.tankmilu.spring.enums.ItemStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,37 +25,30 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Item {
+public class Post {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int itemId;
+    private int postId;
 
-    @Column(nullable = false, length = 20)
-    private String itemName;  
+    @Column(nullable = false, length = 50)
+    private String postSubject;  
 
+    @Lob
     @Column(nullable = false)
-    private Integer price;
+    private String postContents;  
 
-    @Column(nullable = false)
-    private Integer stockQuantity;
+    @ManyToOne
+    @JoinColumn(name = "user_uid")
+    private Integer uId;
 
     @Column(nullable = true, length = 20)
     private Integer category;
 
-    @ManyToOne
-    @JoinColumn(name = "user_uid")
-    private Integer sellerUid;
-
-    @Column(nullable = true)
-    private String description;
-
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private ItemStatus sellStatus;
 
     @CreatedDate
     private LocalDateTime registerDate;
     
     private LocalDateTime modifiedDate;
+    
     
 }

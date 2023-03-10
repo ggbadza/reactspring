@@ -4,13 +4,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Sort;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tankmilu.spring.dto.ItemDto;
+import com.tankmilu.spring.dto.SearchItemDto;
 import com.tankmilu.spring.entity.Item;
 import com.tankmilu.spring.repository.ItemRepository;
 
@@ -46,7 +48,8 @@ public class ItemService {
     }
     
     @Transactional(readOnly = true)
-    public List<Item> getItemList(int page, int size ,HttpServletRequest request) {
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public Page<Item> getItemList(SearchItemDto searchItemDto) {
+        Pageable pageable = PageRequest.of(searchItemDto.getPage(), searchItemDto.getPageSize(), Sort.by("itemName").descending());
+        return itemRepository.findAll(pageable);
     }
 }
