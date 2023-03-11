@@ -2,8 +2,6 @@ package com.tankmilu.spring.service;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +13,7 @@ import com.tankmilu.spring.dto.ItemDto;
 import com.tankmilu.spring.dto.SearchItemDto;
 import com.tankmilu.spring.entity.Item;
 import com.tankmilu.spring.repository.ItemRepository;
+import com.tankmilu.spring.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,10 +23,22 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public Item register(ItemDto itemDto){
+    public Item register(ItemDto itemDto,int uid){
         Item item = new Item();
         item.setItemName(itemDto.getName());
-        item.setCategory(itemDto.getCategory());;
+        item.setCategory(itemDto.getCategory());
+        item.setDescription(itemDto.getDescription());
+        item.setPrice(itemDto.getPrice());
+        item.setStockQuantity(itemDto.getStockQuantity());
+        item.setSellStatus(itemDto.getSellStatus());
+        item.setSellerUid(uid);
+        return itemRepository.save(item);
+    }
+
+    public Item registerByAdmin (ItemDto itemDto){
+        Item item = new Item();
+        item.setItemName(itemDto.getName());
+        item.setCategory(itemDto.getCategory());
         item.setDescription(itemDto.getDescription());
         item.setPrice(itemDto.getPrice());
         item.setStockQuantity(itemDto.getStockQuantity());

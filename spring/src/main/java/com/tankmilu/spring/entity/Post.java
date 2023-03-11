@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
@@ -37,8 +38,6 @@ public class Post {
     @Column(nullable = false)
     private String postContents;  
 
-    @ManyToOne
-    @JoinColumn(name = "user_uid")
     private Integer uId;
 
     @Column(nullable = true, length = 20)
