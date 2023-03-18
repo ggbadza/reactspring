@@ -13,7 +13,6 @@ import com.tankmilu.spring.dto.ItemDto;
 import com.tankmilu.spring.dto.SearchItemDto;
 import com.tankmilu.spring.entity.Item;
 import com.tankmilu.spring.repository.ItemRepository;
-import com.tankmilu.spring.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
