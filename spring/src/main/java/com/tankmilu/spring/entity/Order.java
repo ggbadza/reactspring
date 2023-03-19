@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
+@Entity(name="Orders")
 @EntityListeners(AuditingEntityListener.class)
 public class Order {
     @javax.persistence.Id
@@ -48,8 +48,11 @@ public class Order {
     private Integer discountedPrice;
 
     // 배달
+    @Column(nullable = false, length = 20)
     private String deliveryName;
+    @Column(nullable = false, length = 11)
     private String deliveryPhone;
+    @Column(nullable = true)
     private String deliveryAddress;
 
     @CreatedDate

@@ -13,6 +13,7 @@ import com.tankmilu.spring.dto.UserLoginDto;
 import com.tankmilu.spring.dto.UserModifyDto;
 import com.tankmilu.spring.entity.User;
 import com.tankmilu.spring.enums.UserRole;
+import com.tankmilu.spring.enums.UserState;
 import com.tankmilu.spring.repository.UserRepository;
 import com.tankmilu.spring.security.JwtUtil;
 
@@ -27,11 +28,12 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     public User register(UserRegisterDto userRegisterDto){
-        User user = new User();
-        user.setEmail(userRegisterDto.getEmail());
-        user.setPassword(bcryptPasswordEncoder.encode(userRegisterDto.getPassword()));
-        user.setNickname(userRegisterDto.getName());
-        user.setRole(UserRole.USER);
+        User user = User.builder()
+                    .email(userRegisterDto.getEmail())
+                    .password(bcryptPasswordEncoder.encode(userRegisterDto.getPassword()))
+                    .nickname(userRegisterDto.getName())
+                    .role(UserRole.USER)
+                    .state(UserState.NOMAL).build();
         return userRepository.save(user);
     }
     
@@ -39,8 +41,8 @@ public class UserService {
         return userRepository.findAll();
     }
     
-    public User findUser(int id) {
-        return userRepository.findById(id).orElseThrow(() -> {
+    public User findUser(int uid) {
+        return userRepository.findById(uid).orElseThrow(() -> {
                 return new IllegalArgumentException("유저 ID를 찾을 수 없습니다.");
             }
         );
@@ -51,6 +53,16 @@ public class UserService {
                 return new IllegalArgumentException("유저 Email을 찾을 수 없습니다.");
             }
         );
+    }
+
+    //유저 삭제 처리
+    public User deleteUser(int uid) {
+        User user = userRepository.findById(uid).orElseThrow(() -> {
+            return new IllegalArgumentException("유저 ID를 찾을 수 없습니다.");
+        }
+    );
+        user.setState(UserState.DELETED);
+        return userRepository.save(user);
     }
 
     @Transactional

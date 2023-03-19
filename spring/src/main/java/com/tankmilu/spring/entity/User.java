@@ -14,6 +14,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.tankmilu.spring.enums.UserRole;
+import com.tankmilu.spring.enums.UserState;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +50,10 @@ public class User {
 
     @CreatedDate
     private LocalDateTime registerDate;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserState state;
 
 }
 

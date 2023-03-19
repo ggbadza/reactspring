@@ -41,7 +41,7 @@ public class ItemController {
     //판매자가 상품 등록(판매자 지정 불가)
     @PostMapping("/register")
     public ResponseEntity<?> RegisterItem(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestBody ItemDto itemRequest) {
-        var data = itemService.register(itemRequest,userDetails.getUid());
+        var data = itemService.registerItem(itemRequest,userDetails.getUid());
         return ResponseEntity.ok().body(data);
     }
 
@@ -53,5 +53,10 @@ public class ItemController {
         return ResponseEntity.ok().body(data);
     }
 
-
+    //상품 삭제
+    @PostMapping("/deleteitem")
+    public ResponseEntity<?> DeleteItem(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestBody ItemDto itemRequest) {
+        var data = itemService.deleteItem(itemRequest,userDetails.getUid());
+        return ResponseEntity.ok().body(data);
+    }
 }

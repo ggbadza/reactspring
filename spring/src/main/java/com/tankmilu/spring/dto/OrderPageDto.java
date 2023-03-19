@@ -22,4 +22,8 @@ public class OrderPageDto {
 
     private int salePrice;
     private int totalPrice;
+
+    private String deliveryName;
+    private String deliveryPhone;
+    private String deliveryAddress;
 }

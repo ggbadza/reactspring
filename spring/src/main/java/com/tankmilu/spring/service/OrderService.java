@@ -1,6 +1,7 @@
 package com.tankmilu.spring.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tankmilu.spring.dto.OrderPageDto;
 import com.tankmilu.spring.entity.Item;
@@ -33,6 +34,7 @@ public class OrderService {
          
     }
 
+    @Transactional
     public Order takeorder(OrderPageDto orderPageDto,int uid){
         //오더 변조 검증기능 구현 필요
         Order order = Order.builder()
@@ -43,8 +45,19 @@ public class OrderService {
                             .discountNomal(orderPageDto.getDiscountNomal())
                             .discountDuplicated(orderPageDto.getDiscountDuplicated())
                             .discountCard(orderPageDto.getDiscountCard())
-                            .discountedPrice(orderPageDto.getTotalPrice()).build();
-        return orderRepository.save(order);
+                            .discountedPrice(orderPageDto.getTotalPrice())
+                            .deliveryName(orderPageDto.getDeliveryName())
+                            .deliveryAddress(orderPageDto.getDeliveryAddress())
+                            .deliveryPhone(orderPageDto.getDeliveryPhone()).build();
+        Item item = itemRepository.findById(orderPageDto.getItemId()).orElseThrow(() -> {
+            return new IllegalArgumentException("상품의 ID를 찾을 수 없습니다.");
+        });
+        if(item.getStockQuantity()-orderPageDto.getItemCount()>=0) {
+            item.setStockQuantity(item.getStockQuantity()-orderPageDto.getItemCount());
+            itemRepository.save(item);
+            return orderRepository.save(order);
+        } else {
+            throw new IllegalArgumentException("상품의 재고가 부족합니다.");
+        }
     }
-
 }

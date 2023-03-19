@@ -69,12 +69,17 @@ public class UserController {
     public String login(@RequestBody UserLoginDto userLoginDto, HttpServletResponse response) {
         userService.login(userLoginDto, response);
         return "success!";
-    
     }
 
     @GetMapping("/info") // 인증된 사용자인지 확인
     public ResponseEntity<?> getUserName(@AuthenticationPrincipal CustomUserDetails userDetails) {
         var data = userService.findUser(userDetails.getEmail());
+        return ResponseEntity.ok().body(data);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        var data = userService.deleteUser(userDetails.getUid());
         return ResponseEntity.ok().body(data);
     }
 
