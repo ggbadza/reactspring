@@ -47,13 +47,16 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public Item deleteItem (int itemId){
+    public Item deleteItem (int itemId, int Uid){
         Item item = itemRepository.findById(itemId).orElseThrow(() -> {
             return new IllegalArgumentException("상품의 ID를 찾을 수 없습니다.");
             }
         );
-        item.setSellStatus(ItemStatus.DELETED);
-        return itemRepository.save(item);
+        if(item.getSellerUid()==Uid) {
+            item.setSellStatus(ItemStatus.DELETED);
+            return itemRepository.save(item);
+        }
+        else throw new IllegalArgumentException("본인이 등록한 상품만 삭제 가능합니다.");
     }
     
     public List<Item> findAll() {

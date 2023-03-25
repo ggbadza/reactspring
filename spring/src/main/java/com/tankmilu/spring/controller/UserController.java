@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     
     private final UserService userService;
@@ -83,6 +83,10 @@ public class UserController {
         return ResponseEntity.ok().body(data);
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "success!";
+    }
 
     // public ResponseEntity<?> Login(@RequestBody UserLoginDto userRequest) {
     //     var data = userService.register(userRequest);

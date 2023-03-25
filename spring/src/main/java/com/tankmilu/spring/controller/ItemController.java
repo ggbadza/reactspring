@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/item")
+@RequestMapping("/api/item")
 public class ItemController {
 
     private final ItemService itemService;
@@ -55,8 +55,8 @@ public class ItemController {
 
     //상품 삭제
     @PostMapping("/deleteitem")
-    public ResponseEntity<?> DeleteItem(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestBody ItemDto itemRequest) {
-        var data = itemService.deleteItem(itemRequest,userDetails.getUid());
+    public ResponseEntity<?> DeleteItem(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestBody int itemId) {
+        var data = itemService.deleteItem(itemId,userDetails.getUid());
         return ResponseEntity.ok().body(data);
     }
 }
