@@ -9,7 +9,7 @@ function Login() {
   const [passwordId, setPasswordId] = useState("")
 
     const onClickLogin = () => {
-      if (emailId=="" ||  passwordId=="") {
+      if (emailId==="" ||  passwordId==="") {
       window.alert("아이디와 비밀번호가 입력되어야 합니다.");
       return;
       }
@@ -22,7 +22,7 @@ function Login() {
         { withCredentials: true })
         .then(response => {
           let jwtToken = response.headers.get("Authorization");
-          if(jwtToken.substr(0,6)=="Bearer"){ 
+          if(jwtToken.substr(0,6)==="Bearer"){ 
             jwtToken=jwtToken.substr(7)
           }
           console.log("Authorization : ", jwtToken); 
@@ -33,6 +33,7 @@ function Login() {
         })
         .catch((error) => {
           console.log(error);
+          window.alert(error.response);
         });
     };
 
