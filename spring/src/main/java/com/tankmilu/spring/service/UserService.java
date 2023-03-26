@@ -28,6 +28,9 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     public User register(UserRegisterDto userRegisterDto){
+        if(userRepository.existsByEmail(userRegisterDto.getEmail())){
+            throw new IllegalArgumentException("이미 가입된 이메일 입니다.");
+        }
         User user = User.builder()
                     .email(userRegisterDto.getEmail())
                     .password(bcryptPasswordEncoder.encode(userRegisterDto.getPassword()))

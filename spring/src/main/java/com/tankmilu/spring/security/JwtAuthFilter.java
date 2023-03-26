@@ -28,8 +28,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = jwtUtil.resolveToken(request);
 
-        if(token != null) {
-            if(!jwtUtil.validateToken(token)){
+        if(token != null) { // 토큰 유무 검사
+            if(!jwtUtil.validateToken(token)){ // 토큰 유효성 검사
                 jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
                 return;
             }

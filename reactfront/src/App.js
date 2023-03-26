@@ -1,5 +1,9 @@
 import React, {useEffect, useState} from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from './NavBar';
+
+import Login from './User/Login';
 
 function App() {
    const [hello, setHello] = useState('')
@@ -11,9 +15,14 @@ function App() {
     }, []);
 
     return (
-        <div>
-            백엔드에서 가져온 데이터입니다 : {hello}
-        </div>
+      <BrowserRouter>
+      <NavBar />
+          <div>
+            <Routes>
+            <Route path="/login" element={<Login />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
     );
 }
 

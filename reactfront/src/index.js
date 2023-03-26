@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import 'bootstrap/dist/css/bootstrap.css';
+import { BrowserRouter } from 'react-router-dom';
+import setAuthorization from './User/SetAuthorization';
+import { getCookie } from './User/cookies';
+
+setAuthorization(getCookie("Authorization"));
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
