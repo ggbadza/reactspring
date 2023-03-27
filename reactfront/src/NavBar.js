@@ -10,14 +10,16 @@ function NavBar(){
         <Container>
           <Navbar.Brand href="/">TANKMILU</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
+            <Nav.Link href="/Item">Item</Nav.Link>
+            <Nav.Link href="#/Post">Post</Nav.Link>
           </Nav>
           <Nav>
           {getCookie("Authorization") ? (
             <Nav.Link href="/" onClick={onClickLogout}>로그아웃</Nav.Link>
-          ) : (
+          ) : (<Nav>
+            <Nav.Link href="/register">회원가입</Nav.Link>
             <Nav.Link href="/login">로그인</Nav.Link>
+            </Nav>
           )}
           </Nav>
         </Container>

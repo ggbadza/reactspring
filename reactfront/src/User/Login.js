@@ -8,32 +8,29 @@ function Login() {
   const [emailId, setEmailId] = useState("")
   const [passwordId, setPasswordId] = useState("")
 
-    const onClickLogin = () => {
+  
+
+    const onClickLogin = async () => {
       if (emailId==="" ||  passwordId==="") {
       window.alert("아이디와 비밀번호가 입력되어야 합니다.");
       return;
       }
       console.log("Email : ", emailId);
       console.log("PW : ", passwordId);
-      axios.post("/api/user/login", {
+      await axios.post("/api/user/login", {
           email: emailId,
           password: passwordId,
-        },
-        { withCredentials: true })
+        })
         .then(response => {
           let jwtToken = response.headers.get("Authorization");
           if(jwtToken.substr(0,6)==="Bearer"){ 
-            jwtToken=jwtToken.substr(7)
+            setCookie("Authorization",jwtToken.substr(7)); //토큰 값 쿠키에 저장
           }
-          console.log("Authorization : ", jwtToken); 
-          setCookie("Authorization",jwtToken); //토큰 값 쿠키에 저장
-          setAuthorization(jwtToken);
           document.location.href = '/';
-          return response;
         })
         .catch((error) => {
           console.log(error);
-          window.alert(error.response);
+          window.alert(error.response.data["message"]);
         });
     };
 

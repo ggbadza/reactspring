@@ -34,7 +34,8 @@ public class UserService {
         User user = User.builder()
                     .email(userRegisterDto.getEmail())
                     .password(bcryptPasswordEncoder.encode(userRegisterDto.getPassword()))
-                    .nickname(userRegisterDto.getName())
+                    .nickname(userRegisterDto.getNickname())
+                    .phone(userRegisterDto.getPhone())
                     .role(UserRole.USER)
                     .state(UserState.NOMAL).build();
         return userRepository.save(user);
