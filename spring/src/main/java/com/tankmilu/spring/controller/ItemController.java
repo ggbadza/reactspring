@@ -33,7 +33,7 @@ public class ItemController {
 
     //상품 리스트 획득
     @GetMapping("/itemlist")
-    public ResponseEntity<?> getItemList(@RequestParam SearchItemDto searchItemDto) {
+    public ResponseEntity<?> getItemList(SearchItemDto searchItemDto) {
         var data = itemService.getItemList(searchItemDto);
         return ResponseEntity.ok().body(data);
     }

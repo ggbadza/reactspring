@@ -73,6 +73,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public Page<Item> getItemList(SearchItemDto searchItemDto) {
         Pageable pageable = PageRequest.of(searchItemDto.getPage(), searchItemDto.getPageSize(), Sort.by("itemName").descending());
-        return itemRepository.findAll(pageable);
+        Page<Item> ItemPage= itemRepository.findByItemNameContainingIgnoreCase(searchItemDto.getKeyword(),pageable);
+        return ItemPage;
     }
 }

@@ -13,9 +13,10 @@ public class SearchItemDto {
     private String keyword;      
     private String itemType;    
     public SearchItemDto() {
-        this.page = 1;
+        this.page = 0;
         this.recordSize = 10;
         this.pageSize = 10;
+        this.keyword = "";
     }
 
     public int getOffset() {
