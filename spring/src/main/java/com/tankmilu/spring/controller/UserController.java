@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tankmilu.spring.dto.UserLoginDto;
 import com.tankmilu.spring.dto.UserModifyDto;
 import com.tankmilu.spring.dto.UserRegisterDto;
@@ -52,7 +53,7 @@ public class UserController {
 
     // 본인 설정만 수정
     @PutMapping("/modify")
-    public ResponseEntity<?> modify(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestBody UserModifyDto userRequest) {
+    public ResponseEntity<?> modify(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody UserModifyDto userRequest) {
         var data = userService.modifyUser(userRequest,userDetails.getUid());
         return ResponseEntity.ok().body(data);
     }
@@ -92,6 +93,30 @@ public class UserController {
     //     var data = userService.register(userRequest);
     //     return ResponseEntity.ok().body(data);
     // }
+
+
+    @PostMapping("/kakaologin")
+    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        String createToken = userService.kakaoToken(code,"http://localhost:3000/loginkakao");
+        userService.kakaoLogin(createToken, response);
+        
+      // Cookie 생성 및 직접 브라우저에 Set
+
+      return "success!";
+    }
+
+    // @PutMapping("/registernaver")
+    // public ResponseEntity<?> registerNaver(@RequestParam String code,  @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+    //     return ResponseEntity.ok().body(data);
+    // }
+
+    @PutMapping("/registerkakao")
+    public ResponseEntity<?> registerKakao (@RequestParam String code,  @AuthenticationPrincipal CustomUserDetails userDetails) throws JsonProcessingException {
+        String createToken = userService.kakaoToken(code,"http://localhost:3000/registerkakao");
+        var data = userService.registerKakao(userDetails.getUid(),createToken);
+        return ResponseEntity.ok().body(data);
+    }
 
     
 

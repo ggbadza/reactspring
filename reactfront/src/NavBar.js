@@ -14,8 +14,10 @@ function NavBar(){
             <Nav.Link href="#/Post">Post</Nav.Link>
           </Nav>
           <Nav>
-          {getCookie("Authorization") ? (
+          {getCookie("Authorization") ? (<Nav>
+            <Nav.Link href="/setting">설정</Nav.Link>
             <Nav.Link href="/" onClick={onClickLogout}>로그아웃</Nav.Link>
+            </Nav>
           ) : (<Nav>
             <Nav.Link href="/register">회원가입</Nav.Link>
             <Nav.Link href="/login">로그인</Nav.Link>

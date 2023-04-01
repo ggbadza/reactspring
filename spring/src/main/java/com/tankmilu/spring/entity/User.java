@@ -55,5 +55,14 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserState state;
 
+    @Column(nullable = true, unique = true)
+    private Long naverId;
+
+    @Column(nullable = true, unique = true)
+    private Long kakaoId;
+
+
+    
+
 }
 

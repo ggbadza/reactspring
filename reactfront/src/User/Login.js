@@ -4,11 +4,15 @@ import React, {useState} from 'react';
 import setAuthorization from './SetAuthorization';
 import { setCookie, getCookie, removeCookie } from './cookies';
 
+
+
 function Login() {
   const [emailId, setEmailId] = useState("")
   const [passwordId, setPasswordId] = useState("")
 
-  
+  const REST_API_KEY_KAKAO = "e251174f9e5b682a58df8ae695d66ef7";
+  const REDIRECT_URI_KAKAO =  "http://localhost:3000/loginkakao";
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY_KAKAO}&redirect_uri=${REDIRECT_URI_KAKAO}&response_type=code`
 
     const onClickLogin = async () => {
       if (emailId==="" ||  passwordId==="") {
@@ -47,9 +51,15 @@ function Login() {
           <Form.Label>비밀번호</Form.Label>
           <Form.Control type="password" value={passwordId} onChange={({ target: { value } }) => setPasswordId(value)} placeholder="Password" />
         </Form.Group>
+        <div>
         <Button variant="primary" type="submit" onClick={onClickLogin}>
           로그인
         </Button>
+        </div>
+        <div>
+        <Button variant="success" href="">네이버 로그인</Button>
+        <Button variant="warning" href={KAKAO_AUTH_URL}>카카오 로그인</Button>
+        </div>
       </Form>
     );
   }
