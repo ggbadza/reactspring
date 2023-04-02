@@ -37,5 +37,5 @@ out/
 .vscode/
 
 ### 설정 파일 ###
-spring/src/main/resources/application.properties
-reactfront/src/User/oauthKeys.js
+*.properties
+*.env
