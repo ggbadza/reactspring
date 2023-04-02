@@ -2,6 +2,7 @@ package com.tankmilu.spring.service;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +41,16 @@ public class UserService {
 
     //kakao api 세팅값
     @Value("${spring.security.oauth2.client.registration.Kakao.client-id}")
-    private String clientId;
+    private String kakaoClientId;
     @Value("${spring.security.oauth2.client.registration.Kakao.authorization-grant-type}")
-    private String grantType;
+    private String kakaoGrantType;
+
+    @Value("${spring.security.oauth2.client.registration.Naver.client-id}")
+    private String naverClientId;
+    @Value("${spring.security.oauth2.client.registration.Naver.authorization-grant-type}")
+    private String naverGrantType;
+    @Value("${spring.security.oauth2.client.registration.Naver.client-secret}")
+    private String naverClientsecret;
 
     public User register(UserRegisterDto userRegisterDto){
         if(userRepository.existsByEmail(userRegisterDto.getEmail())){
@@ -126,17 +134,21 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()));
+        // 토큰값 쿠키 설정
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()).substring(7));
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
+    // ---------------------- 카카오 OAUTH -------------------------------------
     public String kakaoToken(String code, String url) throws JsonProcessingException {
         // 헤더
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         // 보디
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", grantType);
-        body.add("client_id", clientId);
+        body.add("grant_type", kakaoGrantType);
+        body.add("client_id", kakaoClientId);
         body.add("redirect_uri", url);
         body.add("code", code);
 
@@ -213,7 +225,103 @@ public class UserService {
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다. 회원가입을 진행하신 뒤 카카오 계정을 등록해주세요.")
         );
 
+        // 토큰값 쿠키 설정
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()).substring(7));
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24);
+        res.addCookie(cookie);
+    }
 
-        res.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()));
+    // ---------------------- 네이버 OAUTH -------------------------------------
+    public String naverToken(String code, String url) throws JsonProcessingException {
+        // 헤더
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        // 보디
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", naverGrantType);
+        body.add("client_id", naverClientId);
+        body.add("client_secret",naverClientsecret);
+        body.add("redirect_uri", url);
+        body.add("code", code);
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(body, headers);
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response = rt.exchange(
+                "https://nid.naver.com/oauth2.0/token",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
+
+        // JSON에서 토큰 추출
+        String responseBody = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+        return jsonNode.get("access_token").asText();
+    }
+
+    @Transactional
+    public User registerNaver(int uid,String token) throws JsonProcessingException {
+        // 헤더
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<MultiValueMap<String, String>> naverUserInfoRequest = new HttpEntity<>(headers);
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response = rt.exchange(
+                "https://openapi.naver.com/v1/nid/me",
+                HttpMethod.GET,
+                naverUserInfoRequest,
+                String.class
+        );
+
+        String responseBody = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody).path("response");
+        String naverId = jsonNode.get("id").asText();
+
+        // 네이버 ID 등록
+        User user = userRepository.findById(uid).orElseThrow(() -> new IllegalArgumentException("유저 ID를 찾을 수 없습니다.")); // 로그인 한 계정 uid
+        if(user.getNaverId()!=null){
+            throw new IllegalArgumentException("이미 네이버 계정이 등록되어 있습니다.");
+        }
+        user.setNaverId(naverId);
+        return user;
+    }
+
+    @Transactional(readOnly = true)
+    public void naverLogin(String token, HttpServletResponse res) throws JsonProcessingException {
+        // 헤더
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<MultiValueMap<String, String>> naverUserInfoRequest = new HttpEntity<>(headers);
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response = rt.exchange(
+                "https://openapi.naver.com/v1/nid/me",
+                HttpMethod.GET,
+                naverUserInfoRequest,
+                String.class
+        );
+
+        String responseBody = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody).path("response");
+        String id = jsonNode.get("id").asText();
+
+        // 사용자 확인
+        User user = userRepository.findByNaverId(id).orElseThrow(
+                () -> new IllegalArgumentException("등록된 사용자가 없습니다. 회원가입을 진행하신 뒤 네이버 계정을 등록해주세요.")
+        );
+
+        // 토큰값 쿠키 설정
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getRole()).substring(7));
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24);
+        res.addCookie(cookie);
     }
 }

@@ -95,14 +95,19 @@ public class UserController {
     // }
 
 
-    @PostMapping("/kakaologin")
-    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        String createToken = userService.kakaoToken(code,"http://localhost:3000/loginkakao");
-        userService.kakaoLogin(createToken, response);
-        
-      // Cookie 생성 및 직접 브라우저에 Set
+    @PostMapping("/oauthlogin")
+    public String oauthLogin(@RequestParam String code, @RequestParam("type") String type, HttpServletResponse response) throws JsonProcessingException {
+        if(type.equals("kakao")) {
+            String createToken = userService.kakaoToken(code,"http://localhost:3000/oauthloginproc?type=kakao");
+            userService.kakaoLogin(createToken, response);
+        } else if(type.equals("naver")) {
+            String createToken = userService.naverToken(code,"http://localhost:3000/oauthloginproc?type=kakao");
+            userService.naverLogin(createToken, response);
+        } else {
+            return type;
+        }
 
-      return "success!";
+        return "success!";
     }
 
     // @PutMapping("/registernaver")
@@ -111,11 +116,18 @@ public class UserController {
     //     return ResponseEntity.ok().body(data);
     // }
 
-    @PutMapping("/registerkakao")
-    public ResponseEntity<?> registerKakao (@RequestParam String code,  @AuthenticationPrincipal CustomUserDetails userDetails) throws JsonProcessingException {
-        String createToken = userService.kakaoToken(code,"http://localhost:3000/registerkakao");
-        var data = userService.registerKakao(userDetails.getUid(),createToken);
-        return ResponseEntity.ok().body(data);
+    @PutMapping("/registeroauth")
+    public String registerOauth (@RequestParam String code, @RequestParam String type, @AuthenticationPrincipal CustomUserDetails userDetails) throws JsonProcessingException {
+        if (type.equals("kakao")) {
+            String createToken = userService.kakaoToken(code,"http://localhost:3000/oauthregister?type=kakao");
+            userService.registerKakao(userDetails.getUid(),createToken);
+        }else if(type.equals("naver")) {
+            String createToken = userService.naverToken(code,"http://localhost:3000/oauthregister?type=naver");
+            userService.registerNaver(userDetails.getUid(),createToken);
+        } else {
+            return "false!";
+        }
+        return "success!";
     }
 
     

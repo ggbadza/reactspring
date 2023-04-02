@@ -56,7 +56,7 @@ public class User {
     private UserState state;
 
     @Column(nullable = true, unique = true)
-    private Long naverId;
+    private String naverId;
 
     @Column(nullable = true, unique = true)
     private Long kakaoId;

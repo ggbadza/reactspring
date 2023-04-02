@@ -1,21 +1,25 @@
 import {Button,Form} from 'react-bootstrap';
 import axios from 'axios';
 import React, {useState} from 'react';
+import { REST_API_KEY_NAVER,REST_API_KEY_KAKAO } from './oauthKeys';
 
 function SettingUser() {
   const [passwordId, setPasswordId] = useState("")
   const [nickName, setNickName] = useState("")
   const [phone, setPhone] = useState("")
 
-  const REST_API_KEY_KAKAO = "e251174f9e5b682a58df8ae695d66ef7";
-  const REDIRECT_URI_KAKAO =  "http://localhost:3000/registerkakao";
+  const REDIRECT_URI_KAKAO =  "http://localhost:3000/oauthregister?type=kakao";
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY_KAKAO}&redirect_uri=${REDIRECT_URI_KAKAO}&response_type=code`
-
+  
+  const REDIRECT_URI_NAVER =  "http://localhost:3000/oauthregister?type=naver";
+  const STATE_NAVER = "test"
+  const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${REST_API_KEY_NAVER}&redirect_uri=${REDIRECT_URI_NAVER}&state=${STATE_NAVER}`
+  
 
     return (
       <Form>
         <div>
-        <Button variant="success" href="">네이버 연동</Button>
+        <Button variant="success" href={NAVER_AUTH_URL}>네이버 연동</Button>
         <Button variant="warning" href={KAKAO_AUTH_URL}>카카오 연동</Button>
         </div>
       </Form>
