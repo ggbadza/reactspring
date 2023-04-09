@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(indexName = "item")
+@Document(indexName = "item") // Elasticsearch 인덱스명 설정
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Item {
@@ -61,7 +61,7 @@ public class Item {
     private ItemStatus sellStatus;
 
     @CreatedDate
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'") //Elasticseach의 날짜 표기 방법 값 설정 
     private LocalDateTime registerDate;
     
     @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")

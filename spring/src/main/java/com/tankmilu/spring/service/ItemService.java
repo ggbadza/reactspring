@@ -34,8 +34,8 @@ public class ItemService {
                     .stockQuantity(itemDto.getStockQuantity())
                     .sellStatus(itemDto.getSellStatus())
                     .sellerUid(uid).build();
-        itemRepository.save(item);
-        itemElasticsearchRepository.save(item);
+        itemRepository.save(item); // JPA 저장
+        itemElasticsearchRepository.save(item); // Elasticsearch 저장
 
         return item;
     }
@@ -75,11 +75,11 @@ public class ItemService {
         );
     }
     
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // elasticsearch로 검색
     public List<Item> getItemList(SearchItemDto searchItemDto) {
-        Pageable pageable = PageRequest.of(searchItemDto.getPage(), searchItemDto.getPageSize(), Sort.by("itemName").descending());
+        Pageable pageable = PageRequest.of(searchItemDto.getPage(), searchItemDto.getPageSize());
         // Page<Item> ItemPage= itemRepository.findByItemNameContainingIgnoreCase(searchItemDto.getKeyword(),pageable);
-        List<Item> ItemPage= itemElasticsearchRepository.findByItemName(searchItemDto.getKeyword());
+        List<Item> ItemPage= itemElasticsearchRepository.findByItemName(searchItemDto.getKeyword(),pageable); 
         return ItemPage;
     }
 }
