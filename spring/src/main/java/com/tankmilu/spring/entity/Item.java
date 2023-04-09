@@ -11,6 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.tankmilu.spring.enums.ItemStatus;
@@ -24,13 +29,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Document(indexName = "item")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Item {
     @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int itemId;
 
+    @Field
     @Column(nullable = false, length = 20)
     private String itemName;  
 
@@ -53,8 +61,10 @@ public class Item {
     private ItemStatus sellStatus;
 
     @CreatedDate
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime registerDate;
     
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime modifiedDate;
 
 }

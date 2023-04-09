@@ -13,6 +13,7 @@ import com.tankmilu.spring.dto.ItemDto;
 import com.tankmilu.spring.dto.SearchItemDto;
 import com.tankmilu.spring.entity.Item;
 import com.tankmilu.spring.enums.ItemStatus;
+import com.tankmilu.spring.repository.ItemElasticsearchRepository;
 import com.tankmilu.spring.repository.ItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final ItemElasticsearchRepository itemElasticsearchRepository;
 
     public Item registerItem(ItemDto itemDto,int uid){
         Item item = Item.builder()
@@ -32,7 +34,10 @@ public class ItemService {
                     .stockQuantity(itemDto.getStockQuantity())
                     .sellStatus(itemDto.getSellStatus())
                     .sellerUid(uid).build();
-        return itemRepository.save(item);
+        itemRepository.save(item);
+        itemElasticsearchRepository.save(item);
+
+        return item;
     }
 
     public Item registerByAdmin (ItemDto itemDto){
@@ -71,9 +76,10 @@ public class ItemService {
     }
     
     @Transactional(readOnly = true)
-    public Page<Item> getItemList(SearchItemDto searchItemDto) {
+    public List<Item> getItemList(SearchItemDto searchItemDto) {
         Pageable pageable = PageRequest.of(searchItemDto.getPage(), searchItemDto.getPageSize(), Sort.by("itemName").descending());
-        Page<Item> ItemPage= itemRepository.findByItemNameContainingIgnoreCase(searchItemDto.getKeyword(),pageable);
+        // Page<Item> ItemPage= itemRepository.findByItemNameContainingIgnoreCase(searchItemDto.getKeyword(),pageable);
+        List<Item> ItemPage= itemElasticsearchRepository.findByItemName(searchItemDto.getKeyword());
         return ItemPage;
     }
 }
