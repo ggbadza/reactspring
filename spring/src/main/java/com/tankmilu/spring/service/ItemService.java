@@ -82,4 +82,12 @@ public class ItemService {
         List<Item> ItemPage= itemElasticsearchRepository.findByItemName(searchItemDto.getKeyword(),pageable); 
         return ItemPage;
     }
+
+    @Transactional(readOnly = true) 
+    public List<Item> getItemListByUser(int Uid) {
+        List<Item> ItemPage= itemRepository.findBySellerUid(Uid);
+        return ItemPage;
+    }
+
+
 }

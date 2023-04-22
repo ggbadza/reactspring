@@ -38,6 +38,13 @@ public class ItemController {
         return ResponseEntity.ok().body(data);
     }
 
+    @GetMapping("/myitemlist")
+    public ResponseEntity<?> getMyItemList(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        var data = itemService.getItemListByUser(userDetails.getUid());
+        return ResponseEntity.ok().body(data);
+    }
+
+
     //판매자가 상품 등록(판매자 지정 불가)
     @PostMapping("/register")
     public ResponseEntity<?> RegisterItem(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestBody ItemDto itemRequest) {
