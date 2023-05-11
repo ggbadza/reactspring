@@ -59,7 +59,7 @@ public class User {
     private String naverId;
 
     @Column(nullable = true, unique = true)
-    private Long kakaoId;
+    private String kakaoId;
 
 
     

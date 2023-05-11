@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 import com.tankmilu.spring.OAuth2.KakaoUserInfo;
 import com.tankmilu.spring.OAuth2.NaverUserInfo;
 import com.tankmilu.spring.OAuth2.OAuth2UserInfo;
+import com.tankmilu.spring.entity.User;
 import com.tankmilu.spring.repository.UserRepository;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Map;
 
-import co.elastic.clients.elasticsearch.security.User;
 
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -48,19 +48,24 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         } else if (registrationId.equals("kakao")){
             oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
         }
+        
 
         String providerId = oAuth2UserInfo.getProviderId();
         String name = oAuth2UserInfo.getName();
-        String email = oAuth2UserInfo.getEmail();      
+        String email = oAuth2UserInfo.getEmail();
 
+        User user;
+        if (registrationId.equals("naver")){
+            user = userRepository.findByNaverId(providerId).get();
 
-        User user = saveOrUpdate(attributes);
-        httpSession.setAttribute("user", new SessionUser(user));
+        } else if (registrationId.equals("kakao")){
+            user = userRepository.findByKakaoId(providerId).get();
+        }
 
-        System.out.println(attributes.getAttributes());
+        
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
-                , attributes.getAttributes()
-                , attributes.getNameAttributeKey());
+                , oAuth2UserInfo.getAttributes()
+                , userNameAttributeName);
     }
 
     
