@@ -188,7 +188,7 @@ public class UserService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
-        Long kakaoId = jsonNode.get("id").asLong();
+        String kakaoId = jsonNode.get("id").asText();
 
         // 카카오 ID 등록
         User user = userRepository.findById(uid).orElseThrow(() -> new IllegalArgumentException("유저 ID를 찾을 수 없습니다.")); // 로그인 한 계정 uid
@@ -218,7 +218,7 @@ public class UserService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
-        Long id = jsonNode.get("id").asLong();
+        String id = jsonNode.get("id").asText();
 
         // 사용자 확인
         User user = userRepository.findByKakaoId(id).orElseThrow(

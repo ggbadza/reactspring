@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.tankmilu.spring.OAuth2.KakaoUserInfo;
 import com.tankmilu.spring.OAuth2.NaverUserInfo;
 import com.tankmilu.spring.OAuth2.OAuth2UserInfo;
+import com.tankmilu.spring.dto.SessionUser;
 import com.tankmilu.spring.entity.User;
 import com.tankmilu.spring.repository.UserRepository;
 
@@ -54,13 +55,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String name = oAuth2UserInfo.getName();
         String email = oAuth2UserInfo.getEmail();
 
-        User user;
+        User user=null;
         if (registrationId.equals("naver")){
             user = userRepository.findByNaverId(providerId).get();
 
         } else if (registrationId.equals("kakao")){
             user = userRepository.findByKakaoId(providerId).get();
         }
+        httpSession.setAttribute("user", new SessionUser(user));
 
         
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
